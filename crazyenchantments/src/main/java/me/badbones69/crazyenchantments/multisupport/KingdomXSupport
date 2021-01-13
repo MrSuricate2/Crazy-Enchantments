@@ -1,0 +1,35 @@
+package me.badbones69.premiumhooks.factions;
+
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.kingdoms.constants.kingdom.Kingdom;
+import org.kingdoms.constants.kingdom.model.KingdomRelation;
+import org.kingdoms.constants.land.Land;
+import org.kingdoms.constants.land.location.SimpleChunkLocation;
+import org.kingdoms.constants.player.KingdomPlayer;
+
+public class KingdomXSupport
+  implements FactionPlugin {
+  public boolean isFriendly(Player player, Player other) {
+     KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
+     KingdomPlayer kOther = KingdomPlayer.getKingdomPlayer(other);
+     KingdomRelation.Attribute attribute = null;
+     return (kPlayer != null && kOther != null && kPlayer.getKingdom() != null && kOther.getKingdom() != null && (kPlayer.getKingdom() == kOther.getKingdom() || (kPlayer.getKingdom() != null && attribute.hasAttribute(kPlayer.getKingdom(),kOther.getKingdom()))));
+  }
+
+  public boolean inTerritory(Player player) {
+     KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
+     SimpleChunkLocation chunk = SimpleChunkLocation.of(player.getLocation());
+     Land land = chunk.getLand();
+     Kingdom kingdom = land.getKingdom();
+     return (kPlayer.getKingdom() != null && kingdom != null && kingdom.equals(kPlayer.getKingdom()));
+  }
+
+  public boolean canBreakBlock(Player player, Block block) {
+     KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
+     SimpleChunkLocation chunk = SimpleChunkLocation.of(player.getLocation());
+     Land land = chunk.getLand();
+     Kingdom kingdom = land.getKingdom();
+     return (land.getKingdom() == null || kPlayer.isAdmin() || kingdom.equals(kPlayer.getKingdom()));
+  }
+}
